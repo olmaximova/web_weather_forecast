@@ -1,6 +1,6 @@
 export class GeolocationService {
     
-    static async getSimpleCoords() {
+    static async getCurrentCoords() {
         return new Promise((resolve, reject) => {
             if (!navigator.geolocation) {
                 reject(new Error('Геолокация не поддерживается'));
