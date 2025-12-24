@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href='style.css'>
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <title>Weather</title>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">
+                <span>WeatherForecast</span>
+            </h1>
+            <button id="refresh-btn" class="btn refresh-btn">
+                <span>Update</span>
+            </button>
+        </header>
+
+        <main class="main-content">
+            <div id="weather-container" class="weather-container">
+            </div>
+            <div id="add-city-container" class="add-city-container hidden">
+                <div class="form-group">
+                    <input type="text" id="city-input" class="city-input" placeholder="Select a city"
+                        autocomplete="off">
+                    <div id="suggestions" class="suggestions hidden"></div>
+                    <div id="city-error" class="error-message"></div>
+                </div>
+                <button id="add-city-btn" class="btn add-city-btn">
+                    <span>Add city</span>
+                </button>
+            </div>
+
+            <div id="location-form-container" class="location-form-container hidden">
+                <div class="location-message">
+                    <p>Allow access to geolocation or enter the city manually</p>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="location-city-input" class="city-input" placeholder="Select a city"
+                        autocomplete="off">
+                    <div id="location-suggestions" class="suggestions hidden"></div>
+                    <div id="location-error" class="error-message"></div>
+                </div>
+                <button id="use-location-btn" class="btn">
+                    <span>Use locationе</span>
+                </button>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>FeatherForecast</p>
+        </footer>
+    </div>
+
+    <div id="loading" class="loading-overlay hidden">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+
+</html>
