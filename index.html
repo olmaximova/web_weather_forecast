@@ -1,69 +1,94 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href='style.css'>
+    <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/x-icon" href="img/favicon.ico">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
     <title>Weather</title>
 </head>
-
 <body>
     <div class="container">
         <header class="header">
             <h1 class="title">
-                <span>WeatherForecast</span>
+                <span>Погода</span>
             </h1>
-            <button id="refresh-btn" class="btn refresh-btn">
-                <span>Update</span>
-            </button>
+            <div class="header-controls">
+                <button id="refresh-btn" class="btn refresh-btn" aria-label="Обновить данные">
+                    <span>Обновить</span>
+                </button>
+                <button id="add-city-btn" class="btn add-city-btn" aria-label="Добавить город">
+                    <span>Добавить город</span>
+                </button>
+            </div>
         </header>
 
         <main class="main-content">
             <div id="weather-container" class="weather-container">
             </div>
-            <div id="add-city-container" class="add-city-container hidden">
-                <div class="form-group">
-                    <input type="text" id="city-input" class="city-input" placeholder="Select a city"
-                        autocomplete="off">
-                    <div id="suggestions" class="suggestions hidden"></div>
-                    <div id="city-error" class="error-message"></div>
+
+            <div id="city-form-container" class="city-form-container hidden">
+                <div class="form-card">
+                    <h2>Добавить город</h2>
+                    <div class="form-group">
+                        <input type="text" 
+                               id="city-input" 
+                               class="city-input" 
+                               placeholder="Начните вводить название города"
+                               autocomplete="off"
+                               aria-label="Название города">
+                        <div id="suggestions" class="suggestions hidden" role="listbox"></div>
+                        <div id="city-error" class="error-message" aria-live="polite"></div>
+                    </div>
+                    <div class="form-actions">
+                        <button id="submit-city-btn" class="btn submit-btn">
+                            <span>Добавить</span>
+                        </button>
+                        <button id="cancel-city-btn" class="btn cancel-btn">
+                            <span>Отмена</span>
+                        </button>
+                    </div>
                 </div>
-                <button id="add-city-btn" class="btn add-city-btn">
-                    <span>Add city</span>
-                </button>
             </div>
 
             <div id="location-form-container" class="location-form-container hidden">
-                <div class="location-message">
-                    <p>Allow access to geolocation or enter the city manually</p>
+                <div class="form-card">
+                    <h2> Выберите город</h2>
+                    <p class="form-description">Разрешите доступ к геолокации или введите город вручную</p>
+                    <div class="form-group">
+                        <input type="text" id="location-city-input" class="city-input" placeholder="Начните вводить название города"
+                               autocomplete="off"
+                               aria-label="Название города для определения погоды">
+                        <div id="location-suggestions" class="suggestions hidden" role="listbox"></div>
+                        <div id="location-error" class="error-message" aria-live="polite"></div>
+                    </div>
+                    <div class="form-actions">
+                        <button id="submit-location-btn" class="btn submit-btn">
+                            <span>Показать погоду</span>
+                        </button>
+                        <button id="retry-geolocation-btn" class="btn retry-btn">
+                            <span>Определить местоположение</span>
+                        </button>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <input type="text" id="location-city-input" class="city-input" placeholder="Select a city"
-                        autocomplete="off">
-                    <div id="location-suggestions" class="suggestions hidden"></div>
-                    <div id="location-error" class="error-message"></div>
-                </div>
-                <button id="use-location-btn" class="btn">
-                    <span>Use locationе</span>
-                </button>
+            </div>
+
+            <div id="loading-state" class="loading-state hidden">
+                <div class="loading-spinner"></div>
+                <p>Загрузка данных о погоде...</p>
+            </div>
+
+            <div id="error-state" class="error-state hidden">
+                <p id="error-message"></p>
+                <button id="retry-btn" class="btn">Попробовать снова</button>
             </div>
         </main>
-
-        <footer class="footer">
-            <p>FeatherForecast</p>
-        </footer>
     </div>
 
-    <div id="loading" class="loading-overlay hidden">
-        <div class="loading-spinner"></div>
-    </div>
-
-    <script src="main.js"></script>
+    <script type="module" src="js/main.js"></script>
+    <script type="module" src="js/api_data.js"></script>
 </body>
-
 </html>
