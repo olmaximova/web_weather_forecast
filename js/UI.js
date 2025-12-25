@@ -1,4 +1,5 @@
 import { FormCreator } from './formCreator.js';
+import { createElement } from './createElement.js';
 
 export class UIManager {
     constructor() {
@@ -106,13 +107,17 @@ export class UIManager {
         }
 
         items.forEach(name => {
-            const div = document.createElement('div');
-            div.className = 'suggestion-item';
-            div.textContent = name;
-            div.onclick = () => callback(name);
+            const div = createElement({ 
+                tag: 'div', 
+                className: 'suggestion-item', 
+                text: name,
+                events: {
+                    click: () => callback(name)  
+                }
+            });
+            
             container.appendChild(div);
         });
-
         container.classList.remove('hidden');
     }
 
