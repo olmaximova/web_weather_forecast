@@ -26,6 +26,8 @@ export class UIManager {
 
         this.refreshBtn = document.getElementById('refresh-btn');
         this.retryBtn = document.getElementById('retry-btn');
+
+        this.changeLocationBtn = document.getElementById('change-location-btn');
     }
 
     showLoading() {
@@ -116,5 +118,10 @@ export class UIManager {
         while (el.firstChild) {
             el.removeChild(el.firstChild);
         }
+    }
+
+    showChangeLocationForm() {
+        this.clearWeatherContainer(); 
+        this.showLocationForm(); 
     }
 }

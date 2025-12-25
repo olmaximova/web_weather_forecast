@@ -31,6 +31,8 @@ export class WeatherApp {
         
         this.ui.cityInp.oninput = (e) => this.showSuggestions(e.target.value, 'city');
         this.ui.locInp.oninput = (e) => this.showSuggestions(e.target.value, 'loc');
+
+        this.ui.changeLocationBtn.onclick = () => this.changeLocation();
         
         document.onclick = (e) => {
             if (!e.target.closest('.city-input')) {
@@ -106,6 +108,10 @@ export class WeatherApp {
     }
     
     createWeatherCard(data, name, isCurrent) {
+        if (isCurrent) {
+            this.removeCurrentLocationCard();
+        }
+        
         const card = new WeatherCard(data, name, isCurrent);
         this.ui.container.appendChild(card.getElement());
         
@@ -171,7 +177,7 @@ export class WeatherApp {
             }
             
             this.ui.showLoading();
-            const res = await WeatherService.getCityWeather(name, CityService);
+            const res = await WeatherService.getWeatherForCity(name, CityService);
             
             this.location = res.coords;
             localStorage.setItem('weather_app_current_location', JSON.stringify(res.coords));
@@ -239,5 +245,12 @@ export class WeatherApp {
     retryLoading() {
         this.ui.hideError();
         this.getWeather();
+    }
+
+    changeLocation() {
+        this.location = null;
+        localStorage.removeItem('weather_app_current_location');
+        
+        this.ui.showLocationForm();
     }
 }
