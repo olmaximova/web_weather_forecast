@@ -23,8 +23,7 @@ export class CityService {
 
             return this.cities;
         } catch (error) {
-            console.error('Ошибка загрузки городов:', error);
-            throw error;
+            throw new Error(`${error}`);
         }
     }
 
