@@ -32,53 +32,6 @@
         <main class="main-content">
             <div id="weather-container" class="weather-container">
             </div>
-
-            <div id="city-form-container" class="city-form-container hidden">
-                <div class="form-card">
-                    <h2>Добавить город</h2>
-                    <div class="form-group">
-                        <input type="text" 
-                               id="city-input" 
-                               class="city-input" 
-                               placeholder="Начните вводить название города"
-                               autocomplete="off"
-                               aria-label="Название города">
-                        <div id="suggestions" class="suggestions hidden" role="listbox"></div>
-                        <div id="city-error" class="error-message" aria-live="polite"></div>
-                    </div>
-                    <div class="form-actions">
-                        <button id="submit-city-btn" class="btn submit-btn">
-                            <span>Добавить</span>
-                        </button>
-                        <button id="cancel-city-btn" class="btn cancel-btn">
-                            <span>Отмена</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div id="location-form-container" class="location-form-container hidden">
-                <div class="form-card">
-                    <h2> Выберите город</h2>
-                    <p class="form-description">Разрешите доступ к геолокации или введите город вручную</p>
-                    <div class="form-group">
-                        <input type="text" id="location-city-input" class="city-input" placeholder="Начните вводить название города"
-                               autocomplete="off"
-                               aria-label="Название города для определения погоды">
-                        <div id="location-suggestions" class="suggestions hidden" role="listbox"></div>
-                        <div id="location-error" class="error-message" aria-live="polite"></div>
-                    </div>
-                    <div class="form-actions">
-                        <button id="submit-location-btn" class="btn submit-btn">
-                            <span>Показать погоду</span>
-                        </button>
-                        <button id="retry-geolocation-btn" class="btn retry-btn">
-                            <span>Определить местоположение</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
             <div id="loading-state" class="loading-state hidden">
                 <div class="loading-spinner"></div>
                 <p>Загрузка данных о погоде...</p>
