@@ -6,204 +6,181 @@ import { CityService } from './cityService.js';
 
 export class WeatherApp {
     constructor() {
-        this.cities = JSON.parse(localStorage.getItem('weather_app_cities') || '[]');
-        this.location = JSON.parse(localStorage.getItem('weather_app_current_location') || 'null');
+
+        this.cities = JSON.parse(localStorage.getItem('cities') || '[]');
+        this.loc = JSON.parse(localStorage.getItem('location') || 'null');
         this.ui = new UIManager();
-        
-        this.start();
+
+        this.init();
     }
-    
-    start() {
-        this.setup();
-        this.getWeather();
+
+    init() {
+        this.bindActions();
+        this.loadElements();
     }
-    
-    setup() {
-        this.ui.refreshBtn.onclick = () => this.refresh();
-        this.ui.retryBtn.onclick = () => this.getWeather();
-        
-        this.ui.addBtn.onclick = () => this.ui.showCityForm();
-        this.ui.cancelCity.onclick = () => this.ui.hideCityForm();
+
+    bindActions() {
+        this.ui.refreshBtn.onclick = () => this.update();
+        this.ui.retryBtn.onclick = () => this.loadElements();
+        this.ui.addBtn.onclick = () => this.ui.showCity();
+        this.ui.cancelCity.onclick = () => this.ui.hideCity();
         this.ui.submitCity.onclick = () => this.addCity();
-        
-        this.ui.submitLoc.onclick = () => this.setLocation();
-        this.ui.retryLoc.onclick = () => this.getLocation();
-        
+        this.ui.submitLoc.onclick = () => this.setLoc();
+        this.ui.retryLoc.onclick = () => this.getLoc();
+        this.ui.changeLocBtn.onclick = () => this.changeLoc();
+
         this.ui.cityInp.oninput = (e) => this.showSuggestions(e.target.value, 'city');
         this.ui.locInp.oninput = (e) => this.showSuggestions(e.target.value, 'loc');
 
-        this.ui.changeLocationBtn.onclick = () => this.changeLocation();
-        
         document.onclick = (e) => {
-            if (!e.target.closest('.city-input')) {
-                this.ui.hideSuggestions();
-            }
+            if (!e.target.closest('.city-inp')) this.ui.hideSuggestions();
         };
     }
-    
-    async getWeather() {
+
+    async loadElements() {
         try {
-            this.ui.showLoading();
+            this.ui.showLoad();
             this.ui.clearWeatherContainer();
-            
-            if (this.location) {
-                await this.loadWeatherByCoords(this.location.lat, this.location.lon, 'Текущее местоположенее', true);
+
+            if (this.loc) {
+                await this.byCoords(this.loc.lat, this.loc.lon, 'Текущее местоположение', true);
             } else if (GeolocationService.isSupported()) {
-                await this.getLocation();
+                await this.getLoc();
             } else {
                 this.ui.showLocationForm();
             }
-            
-            for (const city of this.cities) {
-                await this.loadCityWeather(city.name);
-                await this.delay(300);
+
+            for (const c of this.cities) {
+                await this.cityWeather(c.name);
+                await this.waitGap(300);
             }
-            
-        } catch {
+
+        } catch (error) {
             this.ui.showLocationForm();
         } finally {
-            this.ui.hideLoading();
+            this.ui.hideLoad();
         }
     }
     
-    delay(ms) {
+
+    waitGap(ms) {
         return new Promise(r => setTimeout(r, ms));
     }
-    
-    async getLocation() {
+
+    async getLoc() {
         try {
-            this.ui.showLoading();
-            
-            const data = await WeatherService.getGeoWeather(GeolocationService); 
-            
-            this.location = data.coords;
-            localStorage.setItem('weather_app_current_location', JSON.stringify(data.coords));
-            
-            this.createWeatherCard(data.weather, data.locationName, true);
+            this.ui.showLoad();
+
+            const data = await WeatherService.getGeoWeather(GeolocationService);
+
+            this.loc = data.coords;
+
+            localStorage.setItem('location', JSON.stringify(data.coords));
+
+            this.makeCard(data.weather, data.locationName, true);
+
             this.ui.hideLocationForm();
-            
-        } catch {
+
+        } catch (error) {
             this.ui.showLocationForm();
         } finally {
-            this.ui.hideLoading();
+            this.ui.hideLoad();
         }
     }
-    
-    async loadWeatherByCoords(lat, lon, name, isCurrent) {
+
+    async byCoords(lat, lon, name, isCurr) {
         try {
-            const weather = await WeatherService.getWeather(lat, lon);
-            this.createWeatherCard(weather, name, isCurrent);
-        } catch {
-            throw new Error('Ошибка при загрузке');
+            const w = await WeatherService.getWeather(lat, lon);
+            this.makeCard(w, name, isCurr);
+        } catch (error) {
+            throw new Error('Ошибка получения данных по координатам');
         }
     }
-    
-    async loadCityWeather(name) {
+
+    async cityWeather(name) {
         try {
             const res = await WeatherService.getWeatherForCity(name, CityService);
-            this.createWeatherCard(res.weather, res.locationName, false);
-        } catch {
-            this.ui.showError(`Ошибка для ${name}`);
+            this.makeCard(res.weather, res.locationName, false);
+        } catch (error) {
+            this.ui.errorMsg(`Ошибка: ${name}`);
         }
     }
-    
-    createWeatherCard(data, name, isCurrent) {
-        if (isCurrent) {
-            this.removeCurrentLocationCard();
-        }
-        
-        const card = new WeatherCard(data, name, isCurrent);
+
+    makeCard(data, name, isCurr) {
+        const card = new WeatherCard(data, name, isCurr);
         this.ui.container.appendChild(card.getElement());
-        
-        if (!isCurrent) {
+
+        if (!isCurr) {
             card.setRemoveCallback(() => {
-                this.removeCity(name);
+                this.delCity(name);
                 card.getElement().remove();
             });
         }
     }
-    
+
     async addCity() {
         const name = this.ui.cityInp.value.trim();
-        
-        if (!name) {
-            this.ui.showError('Введите город', 'city');
-            return;
-        }
-        
+        if (!name) return this.ui.errorMsg('Введите город', 'city');
+
         try {
-            const check = await CityService.validateCity(name);
-            
-            if (!check.valid) {
-                this.ui.showError(check.message, 'city');
-                return;
-            }
-            
+            const validation = await CityService.validateCity(name);
+            if (!validation.valid) return this.ui.errorMsg(validation.message, 'city');
+
             if (this.cities.some(c => c.name.toLowerCase() === name.toLowerCase())) {
-                this.ui.showError('Такой город уже есть', 'city');
-                return;
+                return this.ui.errorMsg('Город уже добавлен', 'city');
             }
-            
-            this.ui.showLoading();
+
+            this.ui.showLoad();
             this.cities.push({ name });
-            localStorage.setItem('weather_app_cities', JSON.stringify(this.cities));
-            
-            await this.loadCityWeather(name);
-            
+            localStorage.setItem('cities', JSON.stringify(this.cities));
+
+            await this.cityWeather(name);
             this.ui.cityInp.value = '';
-            this.ui.hideCityForm();
-            
-        } catch {
-            this.ui.showError('Не удалось добавить', 'city');
+            this.ui.hideCity();
+
+        } catch (error) {
+            this.ui.errorMsg('Не удалось добавить город', 'city');
         } finally {
-            this.ui.hideLoading();
+            this.ui.hideLoad();
         }
     }
-    
-    async setLocation() {
+
+    async setLoc() {
         const name = this.ui.locInp.value.trim();
-        
-        if (!name) {
-            this.ui.showError('Введите город', 'loc'); 
-            return;
-        }
-        
+        if (!name) return this.ui.errorMsg('Введите город', 'loc');
+
         try {
-            const check = await CityService.validateCity(name);
-            
-            if (!check.valid) {
-                this.ui.showError(check.message, 'loc'); 
-                return;
-            }
-            
-            this.ui.showLoading();
+            const validation = await CityService.validateCity(name);
+            if (!validation.valid) return this.ui.errorMsg(validation.message, 'loc');
+
+            this.ui.showLoad();
             const res = await WeatherService.getWeatherForCity(name, CityService);
-            
-            this.location = res.coords;
-            localStorage.setItem('weather_app_current_location', JSON.stringify(res.coords));
-            
+
+            this.loc = res.coords;
+            localStorage.setItem('location', JSON.stringify(res.coords));
+
             this.ui.clearWeatherContainer();
-            this.createWeatherCard(res.weather, res.locationName, true);
+            this.makeCard(res.weather, res.locationName, true);
             this.ui.hideLocationForm();
-            
-        } catch (e) {
-            this.ui.showError(e.message, 'loc'); 
+
+        } catch (error) {
+            this.ui.errorMsg(error.message, 'loc');
         } finally {
-            this.ui.hideLoading();
+            this.ui.hideLoad();
         }
     }
-    
+
     async showSuggestions(text, type) {
         if (text.length < 2) {
             this.ui.hideSuggestions();
             return;
         }
-        
+
         try {
             const items = await CityService.getSuggestions(text);
             const container = type === 'city' ? this.ui.citySugg : this.ui.locSugg;
             const input = type === 'city' ? this.ui.cityInp : this.ui.locInp;
-            
+
             this.ui.showSuggestions(items, container, (city) => {
                 input.value = city;
                 this.ui.hideSuggestions();
@@ -212,45 +189,40 @@ export class WeatherApp {
             this.ui.hideSuggestions();
         }
     }
-    
-    removeCity(name) {
+
+    delCity(name) {
         this.cities = this.cities.filter(c => c.name !== name);
-        localStorage.setItem('weather_app_cities', JSON.stringify(this.cities));
-    }
-    
-    async refresh() {
-        try {
-            this.ui.showLoading();
-            this.ui.clearWeatherContainer();
-            
-            await this.delay(100);
-            
-            if (this.location) {
-                await this.loadWeatherByCoords(this.location.lat, this.location.lon, 'Текущее местоположенее', true);
-                await this.delay(800);
-            }
-            
-            for (const city of this.cities) {
-                await this.loadCityWeather(city.name);
-                await this.delay(800);
-            }
-            
-        } catch {
-            this.ui.showError('Не удалось обновитт');
-        } finally {
-            this.ui.hideLoading();
-        }
-    }
-    
-    retryLoading() {
-        this.ui.hideError();
-        this.getWeather();
+        localStorage.setItem('cities', JSON.stringify(this.cities));
     }
 
-    changeLocation() {
-        this.location = null;
-        localStorage.removeItem('weather_app_current_location');
-        
+    async update() {
+        try {
+            this.ui.showLoad();
+            this.ui.clearWeatherContainer();
+
+            await this.waitGap(100);
+
+            if (this.loc) {
+                await this.byCoords(this.loc.lat, this.loc.lon, 'Текущее местоположенее', true)
+                await this.waitGap(800);
+            }
+
+            for (const c of this.cities) {
+                await this.cityWeather(c.name);
+                await this.waitGap(800);
+            }
+
+        } catch (error) {
+            console.log(error)
+            this.ui.errorMsg('Не удалось обновитт');
+        } finally {
+            this.ui.hideLoad();
+        }
+    }
+
+    changeLoc() {
+        this.loc = null;
+        localStorage.removeItem('location');
         this.ui.showLocationForm();
     }
 }
