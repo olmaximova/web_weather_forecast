@@ -23,19 +23,28 @@ export class WeatherApp {
 
     async loadInitialData() {
         try {
-            await this.logic.loadElements();
-        } catch (error) {
-            console.error('Load error:', error);
-            if (!this.currentLocation && !GeolocationService.isSupported()) {
+            this.ui.showLoad();
+
+            if (this.currentLocation) {
+                await this.logic.loadElements();
+            } else if (GeolocationService.isSupported()) {
+                await this.handlers.getCurrentLocation();
+            } else {
                 this.ui.showLocationForm();
             }
+        } catch (error) {
+            console.error('Initial load error:', error);
+            this.ui.errorMsg('Не удалось загрузить данные');
+            this.ui.showLocationForm();
+        } finally {
+            this.ui.hideLoad();
         }
     }
 
     bindActions() {
         const actions = {
             refreshBtn: () => this.refreshData(),
-            retryBtn: () => this.retryLoad(),
+            retryBtn: () => this.loadInitialData(),
             addBtn: () => this.ui.showCity(),
             cancelCity: () => this.ui.hideCity(),
             submitCity: () => this.handlers.addCity(),
@@ -57,11 +66,15 @@ export class WeatherApp {
     }
 
     async refreshData() {
-        await this.logic.updateState();
-    }
-
-    async retryLoad() {
-        await this.logic.loadElements();
+        try {
+            this.ui.showLoad();
+            await this.logic.updateState();
+        } catch (error) {
+            console.error('Refresh error:', error);
+            this.ui.errorMsg('Не удалось обновить данные');
+        } finally {
+            this.ui.hideLoad();
+        }
     }
 
     async showSuggestions(text, type) {

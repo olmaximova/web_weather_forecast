@@ -72,60 +72,36 @@ export class WeatherLogic {
     }
 
     async loadElements() {
-        try {
-            this.ui.showLoad();
-            this.ui.clearWeatherContainer();
+        this.ui.clearWeatherContainer();
 
-            if (this.currentLocation) {
-                try {
-                    await this.showCurrentLocationWeather();
-                } catch (error) {
-                    throw new Error(error);
-                }
-            }
-
-            for (const c of this.cities) {
-                try {
-                    await this.cityWeather(c.name);
-                    await waitGap(300);
-                } catch (error) {
-                    throw new Error(error);
-                }
-            }
-        } catch (error) {
-            throw new Error(error);
-        } finally {
-            this.ui.hideLoad();
+        if (this.currentLocation) {
+            await this.showCurrentLocationWeather();
         }
+
+        const promises = this.cities.map(c => this.cityWeather(c.name));
+        await Promise.all(promises);
     }
 
     async updateState() {
-        try {
-            this.ui.showLoad();
-            this.ui.clearWeatherContainer();
-            await waitGap(100);
+        this.ui.clearWeatherContainer();
 
-            if (this.currentLocation) {
-                try {
-                    await this.showCurrentLocationWeather();
-                    await waitGap(800);
-                } catch (error) {
-                    throw new Error(error);
-                }
-            }
-
-            for (const c of this.cities) {
-                try {
-                    await this.cityWeather(c.name);
-                    await waitGap(800);
-                } catch (error) {
-                    throw new Error(error);
-                }
-            }
-        } catch (error) {
-            throw new Error(error);
-        } finally {
-            this.ui.hideLoad();
+        if (this.currentLocation) {
+            await this.showCurrentLocationWeather();
+            await waitGap(200); 
         }
+
+        for (const c of this.cities) {
+            await this.cityWeather(c.name);
+            await waitGap(200);
+        }
+    }
+
+    setCurrentLocation(lat, lon) {
+        this.currentLocation = {
+            lat: lat,
+            lon: lon,
+            name: 'Текущее местоположение'
+        };
+        storage.set('currentLocation', this.currentLocation);
     }
 }
