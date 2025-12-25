@@ -33,7 +33,6 @@ export class WeatherApp {
                 this.ui.showLocationForm();
             }
         } catch (error) {
-            console.error('Initial load error:', error);
             this.ui.errorMsg('Не удалось загрузить данные');
             this.ui.showLocationForm();
         } finally {
@@ -70,7 +69,6 @@ export class WeatherApp {
             this.ui.showLoad();
             await this.logic.updateState();
         } catch (error) {
-            console.error('Refresh error:', error);
             this.ui.errorMsg('Не удалось обновить данные');
         } finally {
             this.ui.hideLoad();
@@ -93,7 +91,6 @@ export class WeatherApp {
                 this.ui.hideSuggestions();
             });
         } catch (error) {
-            console.error('Suggestions error:', error);
             this.ui.hideSuggestions();
         }
     }

@@ -21,7 +21,7 @@ export class WeatherHandlers {
 
             if (this.logic.isCityAlreadyAdded(cityCoords) ||
                 this.logic.cities.some(c => c.name.toLowerCase() === name.toLowerCase())) {
-                return this.ui.errorMsg('Этот город уже есть в вашем списке', 'city');
+                return this.ui.errorMsg('Этот город уже есть', 'city');
             }
 
             this.ui.showLoad();
@@ -31,8 +31,7 @@ export class WeatherHandlers {
             this.ui.cityInp.value = '';
             this.ui.hideCity();
         } catch (error) {
-            this.ui.errorMsg('Не удалось добавить город', 'city');
-            throw new Error(error);
+            this.ui.errorMsg('Не удалось добавить', 'city');
         } finally {
             this.ui.hideLoad();
         }
@@ -57,7 +56,7 @@ export class WeatherHandlers {
                 };
                 storage.set('currentLocation', this.logic.currentLocation);
             } else if (this.logic.isCityAlreadyAdded(res.coords)) {
-                this.ui.errorMsg('Этот город уже есть в вашем списке', 'loc');
+                this.ui.errorMsg('Этот город уже есть', 'loc');
                 return;
             } else {
                 this.logic.currentLocation = {
@@ -72,7 +71,6 @@ export class WeatherHandlers {
             this.ui.hideLocationForm();
         } catch (error) {
             this.ui.errorMsg('Не удалось установить местоположение', 'loc');
-            throw new Error(error);
         }
     }
 
@@ -91,7 +89,6 @@ export class WeatherHandlers {
             this.ui.hideLocationForm();
         } catch (error) {
             this.ui.showLocationForm();
-            throw new Error(error)
         }
     }
 

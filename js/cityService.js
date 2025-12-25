@@ -1,84 +1,47 @@
-import { CITIES_DATA_URL } from './api_data.js'
+import { CITIES_DATA_URL } from './api_data.js';
 
 export class CityService {
     static cities = null;
 
     static async loadCities() {
-        if (this.cities) {
-            return this.cities;
-        }
+        if (this.cities) return this.cities;
 
-        try {
-            const response = await fetch(CITIES_DATA_URL);
-            if (!response.ok) {
-                throw new Error(`Ошибка загрузки: HTTP ${response.status}`);
-            }
-            const data = await response.json();
+        const response = await fetch(CITIES_DATA_URL);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-            this.cities = data.map(city => ({
-                name: city.name,
-                lat: city.coords.lat,
-                lon: city.coords.lon
-            }));
-
-            return this.cities;
-        } catch (error) {
-            throw new Error(`${error}`);
-        }
-    }
-
-    static async findCityByName(cityName) {
-        const cities = await this.loadCities();
-        const searchName = cityName.toLowerCase().trim();
-
-        return cities.find(city =>
-            city.name.toLowerCase() === searchName) || null;
+        const data = await response.json();
+        this.cities = data.map(({ name, coords: { lat, lon } }) => ({ name, lat, lon }));
+        return this.cities;
     }
 
     static async getCityCoords(cityName) {
-        const city = await this.findCityByName(cityName);
+        const cities = await this.loadCities();
+        const city = cities.find(c => c.name.toLowerCase() === cityName.toLowerCase().trim());
 
-        if (!city) {
-            throw new Error(`Город "${cityName}" не найден`);
-        }
-
-        return {
-            lat: city.lat,
-            lon: city.lon,
-            name: city.name
-        };
+        if (!city) throw new Error(`Город "${cityName}" не найден`);
+        return city;
     }
 
     static async getSuggestions(searchText) {
+        if (searchText.trim().length < 2) return [];
+
         const cities = await this.loadCities();
-
-        if (!searchText || searchText.trim().length < 2) {
-            return [];
-        }
-
-        const searchLower = searchText.toLowerCase().trim();
-
         return cities
-            .filter(city => city.name.toLowerCase().includes(searchLower))
+            .filter(city => city.name.toLowerCase().includes(searchText.toLowerCase().trim()))
             .slice(0, 10)
             .map(city => city.name);
     }
 
     static async validateCity(cityName) {
-        if (!cityName || cityName.trim().length < 2) {
-            return { valid: false, message: 'Введите название города' };
+        if (!cityName?.trim() || cityName.trim().length < 2) {
+            return { valid: false, message: 'Введите название города (минимум 2 символа)' };
         }
 
         try {
-            const city = await this.getCityCoords(cityName);
-            return {
-                valid: true,
-                message: 'Город найден',
-                coords: city
-            };
-        } catch (error) {
-            return { valid: false, message: 'Город не найден. Убедитесь в правильности написания' };
+            await this.getCityCoords(cityName);
+            return { valid: true, message: 'Город найден' };
+        } catch {
+            return { valid: false, message: 'Город не найден' };
         }
     }
-
 }
