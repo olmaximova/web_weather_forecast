@@ -69,13 +69,16 @@ export class CityService {
             return { valid: false, message: 'Введите название города' };
         }
 
-        const city = await this.findCityByName(cityName);
-
-        if (!city) {
+        try {
+            const city = await this.getCityCoords(cityName);
+            return {
+                valid: true,
+                message: 'Город найден',
+                coords: city
+            };
+        } catch (error) {
             return { valid: false, message: 'Город не найден. Убедитесь в правильности написания' };
         }
-
-        return { valid: true, city };
     }
 
 }
