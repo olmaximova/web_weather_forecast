@@ -1,11 +1,13 @@
 import { FormCreator } from './formCreator.js';
 import { createElement } from './createElement.js';
+import { SuccessModal } from './createSuccess.js';
 
 export class UIManager {
     constructor() {
         this.makeForms();
         this.getEls();
         this.bindAct();
+        this.successModal = new SuccessModal();   
     }
 
     makeForms() {
@@ -132,5 +134,13 @@ export class UIManager {
 
     clearElement(el) {
         while (el.firstChild) el.removeChild(el.firstChild);
+    }
+
+    showSuccess(message = 'Город успешно добавлен!', details = 'Новый город добавлен в ваш список прогнозов.') {
+            this.successModal.show(message, details);
+        }
+
+    hideSuccess() {
+        this.successModal.hide();
     }
 }
