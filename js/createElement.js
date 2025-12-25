@@ -1,27 +1,27 @@
 export function createElement({
-  tag,
-  text = "",
-  className = "",
-  attributes = {},
-  events = {},
-  dataset = {},
+    tag,
+    text = "",
+    className = "",
+    attributes = {},
+    events = {},
+    dataset = {},
 }) {
-  const element = document.createElement(tag);
+    const element = document.createElement(tag);
 
-  if (className) element.className = className;
-  if (text) element.textContent = text;
+    if (className) element.className = className;
+    if (text) element.textContent = text;
 
-  Object.entries(attributes).forEach(([key, value]) => {
-    element.setAttribute(key, value);
-  });
+    Object.entries(attributes).forEach(([key, value]) => {
+        element.setAttribute(key, value);
+    });
 
-  Object.entries(events).forEach(([event, handler]) => {
-    element.addEventListener(event, handler);
-  });
+    Object.entries(events).forEach(([event, handler]) => {
+        element.addEventListener(event, handler);
+    });
 
-  Object.entries(dataset).forEach(([key, value]) => {
-    element.dataset[key] = value;
-  });
+    Object.entries(dataset).forEach(([key, value]) => {
+        element.dataset[key] = value;
+    });
 
-  return element;
+    return element;
 }
