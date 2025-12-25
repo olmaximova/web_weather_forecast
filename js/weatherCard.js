@@ -38,6 +38,7 @@ export class WeatherCard {
             const removeBtn = createElement({
                 tag: 'button', 
                 className: 'remove-btn', 
+                text: 'x',
                 attributes: {'aria-label': `Удалить ${this.locationName}`
                 }})
             
