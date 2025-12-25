@@ -8,8 +8,10 @@ export const checkCoords = (c1, c2, tolerance = 0.1) => {
 
 export const storage = {
     get(key, defaultValue = []) {
-        return JSON.parse(localStorage.getItem(key) || JSON.stringify(defaultValue))},
+        return JSON.parse(localStorage.getItem(key) || JSON.stringify(defaultValue))
+    },
     set(key, value) {
-    localStorage.setItem(key, JSON.stringify(value))},
+        localStorage.setItem(key, JSON.stringify(value))
+    },
     remove(key) { localStorage.removeItem(key); }
 };

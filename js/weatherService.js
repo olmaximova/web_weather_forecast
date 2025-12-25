@@ -2,7 +2,7 @@ import { getWeatherUrl } from './api_data.js';
 import { WeatherData } from './weatherData.js';
 
 export class WeatherService {
-    
+
     static async getWeather(lat, lon) {
         const url = getWeatherUrl(lat, lon);
         const res = await fetch(url);
@@ -10,7 +10,7 @@ export class WeatherService {
         const data = await res.json();
         return new WeatherData(data);
     }
-    
+
     static async getWeatherForCity(cityName, cityService) {
         try {
             const coords = await cityService.getCityCoords(cityName);
@@ -24,8 +24,8 @@ export class WeatherService {
             throw new Error('Не удалось получить погоду');
         }
     }
-    
-    static async getGeoWeather(geoService) {  
+
+    static async getGeoWeather(geoService) {
         try {
             const coords = await geoService.getCurrentCoords();
             const weather = await this.getWeather(coords.lat, coords.lon);

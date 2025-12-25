@@ -1,12 +1,12 @@
 export class GeolocationService {
-    
+
     static async getCurrentCoords() {
         return new Promise((resolve, reject) => {
             if (!navigator.geolocation) {
                 reject(new Error('Геолокация не поддерживается'));
                 return;
             }
-            
+
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     resolve({
@@ -20,7 +20,7 @@ export class GeolocationService {
             );
         });
     }
-    
+
     static isSupported() {
         return 'geolocation' in navigator;
     }

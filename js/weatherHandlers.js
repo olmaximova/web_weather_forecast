@@ -19,7 +19,7 @@ export class WeatherHandlers {
 
             const cityCoords = await CityService.getCityCoords(name);
 
-            if (this.logic.isCityAlreadyAdded(cityCoords) || 
+            if (this.logic.isCityAlreadyAdded(cityCoords) ||
                 this.logic.cities.some(c => c.name.toLowerCase() === name.toLowerCase())) {
                 return this.ui.errorMsg('Этот город уже есть в вашем списке', 'city');
             }
@@ -60,10 +60,10 @@ export class WeatherHandlers {
                 this.ui.errorMsg('Этот город уже есть в вашем списке', 'loc');
                 return;
             } else {
-                this.logic.currentLocation = { 
-                    lat: res.coords.lat, 
-                    lon: res.coords.lon, 
-                    name: 'Текущее местоположение' 
+                this.logic.currentLocation = {
+                    lat: res.coords.lat,
+                    lon: res.coords.lon,
+                    name: 'Текущее местоположение'
                 };
                 storage.set('currentLocation', this.logic.currentLocation);
             }

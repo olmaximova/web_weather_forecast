@@ -9,7 +9,7 @@ export class WeatherApp {
     constructor() {
         this.cities = storage.get('cities', []);
         this.currentLocation = storage.get('currentLocation', null);
-        
+
         this.ui = new UIManager();
         this.logic = new WeatherLogic(this.cities, this.currentLocation, this.ui.container, this.ui);
         this.handlers = new WeatherHandlers(this.logic, this.ui);
@@ -23,7 +23,7 @@ export class WeatherApp {
 
     async loadInitialData() {
         try {
-            await this.logic.loadElements(); 
+            await this.logic.loadElements();
         } catch (error) {
             console.error('Load error:', error);
             if (!this.currentLocation && !GeolocationService.isSupported()) {
@@ -43,7 +43,7 @@ export class WeatherApp {
             retryLoc: () => this.handlers.getCurrentLocation(),
             changeLocBtn: () => this.handlers.changeCurrentLocation()
         };
-        
+
         Object.entries(actions).forEach(([key, fn]) => {
             if (this.ui[key]) this.ui[key].onclick = fn;
         });
@@ -61,7 +61,7 @@ export class WeatherApp {
     }
 
     async retryLoad() {
-        await this.logic.loadElements(); 
+        await this.logic.loadElements();
     }
 
     async showSuggestions(text, type) {

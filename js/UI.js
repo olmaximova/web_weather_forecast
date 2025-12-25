@@ -107,15 +107,15 @@ export class UIManager {
         }
 
         items.forEach(name => {
-            const div = createElement({ 
-                tag: 'div', 
-                className: 'suggestion-item', 
+            const div = createElement({
+                tag: 'div',
+                className: 'suggestion-item',
                 text: name,
                 events: {
-                    click: () => callback(name)  
+                    click: () => callback(name)
                 }
             });
-            
+
             container.appendChild(div);
         });
         container.classList.remove('hidden');
