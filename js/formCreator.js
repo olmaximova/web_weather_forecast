@@ -20,7 +20,7 @@ export class FormCreator {
             }
         });
 
-        const sugg = createElement({ tag: 'div', className: 'sugg hidden' });
+        const sugg = createElement({ tag: 'div', className: 'suggestion hidden' });
 
         const err = createElement({ tag: 'div', className: 'err-msg' });
 
@@ -59,7 +59,7 @@ export class FormCreator {
             }
         });
 
-        const sugg = createElement({ tag: 'div', className: 'sugg hidden' });
+        const sugg = createElement({ tag: 'div', className: 'suggestion hidden' });
 
         const err = createElement({ tag: 'div', className: 'err-msg' });
 
