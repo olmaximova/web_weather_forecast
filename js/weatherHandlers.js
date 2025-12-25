@@ -117,37 +117,47 @@ export class WeatherHandlers {
             this.ui.hideLoad();
         }
     }
-
+    
     async getCurrentLocation() {
         try {
             this.ui.showLoad();
-            const coords = await GeolocationService.getCurrentCoords();
+
+            const data = await WeatherService.getGeoWeather(GeolocationService);
 
             this.logic.currentLocation = {
-                lat: coords.lat,
-                lon: coords.lon,
+                lat: data.coords.lat,
+                lon: data.coords.lon,
                 name: 'Текущее местоположение'
             };
             storage.set('currentLocation', this.logic.currentLocation);
 
             await this.logic.loadElements();
-            this.ui.showSuccess('Местоположение определено!');
+
+            this.ui.showSuccess(
+                'Местоположение определено!',
+                'Ваше текущее местоположение определено автоматически.'
+            );
+
+            this.clearLocationForm();
             this.ui.hideLocationForm();
 
         } catch (error) {
-
-            if (error.message.includes('denied') || error.message.includes('отказ')) {
-                this.ui.errorMsg('Не удалось определить ваше местоположение. Введите город вручную', 'loc');
-            } else if (error.message.includes('timeout')) {
-                this.ui.errorMsg('Истекло время ожидания геолокации. Введите город вручную', 'loc');
+            if (error.message.includes('Geolocation error') ||
+                error.message.includes('Permission denied') ||
+                error.message.includes('Geolocation request failed')) {
+                this.ui.errorMsg('Не удалось определить ваше местоположение. Введите город вручную.', 'loc');
+            } else if (error.message.includes('timeout') || error.message.includes('Timeout')) {
+                this.ui.errorMsg('Истекло время ожидания геолокации. Введите город вручную.', 'loc');
             } else {
-                this.ui.errorMsg('Произошла ошибка. Попробуйте ввести город вручную', 'loc');
+                this.ui.errorMsg('Произошла ошибка. Попробуйте ввести город вручную.', 'loc');
             }
+
             this.ui.showLocationForm();
         } finally {
             this.ui.hideLoad();
         }
     }
+
 
     changeCurrentLocation() {
         this.logic.currentLocation = null;
