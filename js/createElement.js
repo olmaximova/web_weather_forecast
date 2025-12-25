@@ -5,6 +5,7 @@ export function createElement({
     attributes = {},
     events = {},
     dataset = {},
+    children = []
 }) {
     const element = document.createElement(tag);
 
@@ -21,6 +22,12 @@ export function createElement({
 
     Object.entries(dataset).forEach(([key, value]) => {
         element.dataset[key] = value;
+    });
+
+    children.forEach(child => {
+        if (child instanceof Node) {
+            element.appendChild(child);
+        }
     });
 
     return element;
