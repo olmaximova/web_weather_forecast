@@ -19,7 +19,7 @@ export class WeatherHandlers {
 
             const cityCoords = await CityService.getCityCoords(name);
 
-            if (this.logic.isCityAlreadyAdded(cityCoords) ||
+            if (this.logic.isCityAlreadyAdded(cityCoords) || 
                 this.logic.cities.some(c => c.name.toLowerCase() === name.toLowerCase())) {
                 return this.ui.errorMsg('Этот город уже есть в вашем списке', 'city');
             }
@@ -32,6 +32,7 @@ export class WeatherHandlers {
             this.ui.hideCity();
         } catch (error) {
             this.ui.errorMsg('Не удалось добавить город', 'city');
+            throw new Error(error);
         } finally {
             this.ui.hideLoad();
         }
@@ -45,7 +46,6 @@ export class WeatherHandlers {
             const validation = await CityService.validateCity(name);
             if (!validation.valid) return this.ui.errorMsg(validation.message, 'loc');
 
-            this.ui.showLoad();
             const res = await WeatherService.getWeatherForCity(name, CityService);
 
             const existingCity = this.logic.findExistingCity(res.coords, name);
@@ -56,15 +56,14 @@ export class WeatherHandlers {
                     name: 'Текущее местоположение'
                 };
                 storage.set('currentLocation', this.logic.currentLocation);
-                this.ui.errorMsg(`${name} установлен как текущее местоположение`, 'loc');
             } else if (this.logic.isCityAlreadyAdded(res.coords)) {
                 this.ui.errorMsg('Этот город уже есть в вашем списке', 'loc');
                 return;
             } else {
-                this.logic.currentLocation = {
-                    lat: res.coords.lat,
-                    lon: res.coords.lon,
-                    name: 'Текущее местоположение'
+                this.logic.currentLocation = { 
+                    lat: res.coords.lat, 
+                    lon: res.coords.lon, 
+                    name: 'Текущее местоположение' 
                 };
                 storage.set('currentLocation', this.logic.currentLocation);
             }
@@ -73,14 +72,12 @@ export class WeatherHandlers {
             this.ui.hideLocationForm();
         } catch (error) {
             this.ui.errorMsg('Не удалось установить местоположение', 'loc');
-        } finally {
-            this.ui.hideLoad();
+            throw new Error(error);
         }
     }
 
     async getCurrentLocation() {
         try {
-            this.ui.showLoad();
             const data = await WeatherService.getGeoWeather(GeolocationService);
 
             this.logic.currentLocation = {
@@ -94,8 +91,7 @@ export class WeatherHandlers {
             this.ui.hideLocationForm();
         } catch (error) {
             this.ui.showLocationForm();
-        } finally {
-            this.ui.hideLoad();
+            throw new Error(error)
         }
     }
 

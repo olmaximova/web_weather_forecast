@@ -7,8 +7,9 @@ import { GeolocationService } from './geoLocation.js';
 
 export class WeatherApp {
     constructor() {
-        this.cities = storage.get('cities');
+        this.cities = storage.get('cities', []);
         this.currentLocation = storage.get('currentLocation', null);
+        
         this.ui = new UIManager();
         this.logic = new WeatherLogic(this.cities, this.currentLocation, this.ui.container, this.ui);
         this.handlers = new WeatherHandlers(this.logic, this.ui);
@@ -17,17 +18,24 @@ export class WeatherApp {
 
     init() {
         this.bindActions();
-        this.logic.loadElements().catch(() => {
+        this.loadInitialData();
+    }
+
+    async loadInitialData() {
+        try {
+            await this.logic.loadElements(); 
+        } catch (error) {
+            console.error('Load error:', error);
             if (!this.currentLocation && !GeolocationService.isSupported()) {
                 this.ui.showLocationForm();
             }
-        });
+        }
     }
 
     bindActions() {
         const actions = {
-            refreshBtn: () => this.logic.updateState(),
-            retryBtn: () => this.logic.loadElements(),
+            refreshBtn: () => this.refreshData(),
+            retryBtn: () => this.retryLoad(),
             addBtn: () => this.ui.showCity(),
             cancelCity: () => this.ui.hideCity(),
             submitCity: () => this.handlers.addCity(),
@@ -35,14 +43,25 @@ export class WeatherApp {
             retryLoc: () => this.handlers.getCurrentLocation(),
             changeLocBtn: () => this.handlers.changeCurrentLocation()
         };
-        Object.entries(actions).forEach(([key, fn]) => this.ui[key].onclick = fn);
+        
+        Object.entries(actions).forEach(([key, fn]) => {
+            if (this.ui[key]) this.ui[key].onclick = fn;
+        });
 
-        this.ui.cityInp.oninput = (e) => this.showSuggestions(e.target.value, 'city');
-        this.ui.locInp.oninput = (e) => this.showSuggestions(e.target.value, 'loc');
+        if (this.ui.cityInp) this.ui.cityInp.oninput = (e) => this.showSuggestions(e.target.value, 'city');
+        if (this.ui.locInp) this.ui.locInp.oninput = (e) => this.showSuggestions(e.target.value, 'loc');
 
         document.onclick = (e) => {
             if (!e.target.closest('.city-inp')) this.ui.hideSuggestions();
         };
+    }
+
+    async refreshData() {
+        await this.logic.updateState();
+    }
+
+    async retryLoad() {
+        await this.logic.loadElements(); 
     }
 
     async showSuggestions(text, type) {
@@ -61,6 +80,7 @@ export class WeatherApp {
                 this.ui.hideSuggestions();
             });
         } catch (error) {
+            console.error('Suggestions error:', error);
             this.ui.hideSuggestions();
         }
     }

@@ -72,26 +72,60 @@ export class WeatherLogic {
     }
 
     async loadElements() {
-        this.ui.clearWeatherContainer();
-        if (this.currentLocation) {
-            await this.showCurrentLocationWeather();
-        }
-        for (const c of this.cities) {
-            await this.cityWeather(c.name);
-            await waitGap(300);
+        try {
+            this.ui.showLoad();
+            this.ui.clearWeatherContainer();
+
+            if (this.currentLocation) {
+                try {
+                    await this.showCurrentLocationWeather();
+                } catch (error) {
+                    throw new Error(error);
+                }
+            }
+
+            for (const c of this.cities) {
+                try {
+                    await this.cityWeather(c.name);
+                    await waitGap(300);
+                } catch (error) {
+                    throw new Error(error);
+                }
+            }
+        } catch (error) {
+            throw new Error(error);
+        } finally {
+            this.ui.hideLoad();
         }
     }
 
     async updateState() {
-        this.ui.clearWeatherContainer();
-        await waitGap(100);
-        if (this.currentLocation) {
-            await this.showCurrentLocationWeather();
-            await waitGap(800);
-        }
-        for (const c of this.cities) {
-            await this.cityWeather(c.name);
-            await waitGap(800);
+        try {
+            this.ui.showLoad();
+            this.ui.clearWeatherContainer();
+            await waitGap(100);
+
+            if (this.currentLocation) {
+                try {
+                    await this.showCurrentLocationWeather();
+                    await waitGap(800);
+                } catch (error) {
+                    throw new Error(error);
+                }
+            }
+
+            for (const c of this.cities) {
+                try {
+                    await this.cityWeather(c.name);
+                    await waitGap(800);
+                } catch (error) {
+                    throw new Error(error);
+                }
+            }
+        } catch (error) {
+            throw new Error(error);
+        } finally {
+            this.ui.hideLoad();
         }
     }
 }
