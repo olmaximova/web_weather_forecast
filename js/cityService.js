@@ -1,4 +1,4 @@
-const CITIES_DATA_URL = 'data.json';
+import { CITIES_DATA_URL } from './api_data.js' 
 
 export class CityService {
     static cities = null;
