@@ -8,7 +8,6 @@ export class DailyForecast {
         this.uvIndexMax = data.uv_index_max?.[index];
         this.precipProbabilityMax = data.precipitation_probability_max?.[index];
         this.windSpeedMax = data.wind_speed_10m_max[index];
-        this.windGustsMax = data.wind_gusts_10m_max[index];
         this.windDirection = data.wind_direction_10m_dominant[index];
     }
 
@@ -30,10 +29,6 @@ export class DailyForecast {
 
     get formattedWindSpeed() {
         return this.windSpeedMax !== undefined ? `${this.windSpeedMax.toFixed(1)} м/с` : '—';
-    }
-
-    get formattedWindGusts() {
-        return this.windGustsMax !== undefined ? `${this.windGustsMax.toFixed(1)} м/с` : '—';
     }
 
     get formattedWindDirection() {
