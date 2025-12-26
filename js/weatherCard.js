@@ -1,4 +1,5 @@
 import { createElement } from './createElement.js';
+import { dayNames } from './weather_data.js';
 
 export class WeatherCard {
     constructor(weatherData, locationName, isCurrentLocation) {
@@ -57,81 +58,147 @@ export class WeatherCard {
     }
 
     createCurrentWeather() {
-        const currentWeather = createElement({ tag: 'div', className: 'current-weather' })
+        const currentWeather = createElement({ tag: 'div', className: 'current-weather' });
 
         const temperature = createElement({
             tag: 'div',
             className: 'temperature',
-            text: this.weatherData.current.formattedTemperature
-        })
+            text: this.weatherData.current?.formattedTemperature || '—'
+        });
 
-        const details = createElement({ tag: 'div', className: 'weather-details' })
+        const details = createElement({ tag: 'div', className: 'weather-details' });
 
         const description = createElement({
             tag: 'div',
             className: 'weather-description',
-            text: this.weatherData.current.isDay ? 'День' : 'Ночь'
-        })
+            text: this.weatherData.current?.isDaytime ? 'День' : 'Ночь'
+        });
 
-        const info = createElement({ tag: 'div', className: 'weather-info' })
+        const info = createElement({ tag: 'div', className: 'weather-info' });
 
-        const humidity = createElement({ tag: 'span', text: `Влажность: ${this.weatherData.current.humidity}%` })
+        const humidity = createElement({
+            tag: 'span',
+            text: `Влажность: ${this.weatherData.current?.humidity ?? '—'}%`
+        });
 
         const feelsLike = createElement({
-            tag:
-                'span', text: `
-            Ощущается: ${this.weatherData.current.formattedFeelsLike}`
-        })
+            tag: 'span',
+            text: `Ощущается: ${this.weatherData.current?.formattedFeelsLike || '—'}`
+        });
 
-        info.appendChild(humidity);
-        info.appendChild(feelsLike);
+        const todayForecast = this.weatherData.todayForecast || [];
+
+        if (todayForecast) {
+            const windSpeed = createElement({
+                tag: 'span',
+                text: `Ветер: ${todayForecast.formattedWindSpeed}`
+            });
+
+            const windDir = createElement({
+                tag: 'span',
+                text: `Направление: ${todayForecast.formattedWindDirection}`
+            });
+
+            const precipProb = createElement({
+                tag: 'span',
+                text: `Вероятность осадков: ${todayForecast.formattedPrecipProbability}`
+            });
+
+            const uvIndex = createElement({
+                tag: 'span',
+                text: `УФ: ${todayForecast.formattedUVIndex}`
+            });
+
+            info.appendChild(humidity);
+            info.appendChild(feelsLike);
+            info.appendChild(windSpeed);
+            info.appendChild(windDir);
+            info.append(precipProb, uvIndex);
+        } else {
+            info.appendChild(humidity);
+            info.appendChild(feelsLike);
+        }
 
         details.appendChild(description);
         details.appendChild(info);
-
         currentWeather.appendChild(temperature);
         currentWeather.appendChild(details);
 
         return currentWeather;
     }
 
-    createNoDataMessage() {
-        const noData = createElement({ tag: 'div', className: 'no-data', text: 'Неи данных о погоде' });
-        return noData;
-    }
-
     createForecast() {
-        const forecast = createElement({ tag: 'div', className: 'forecast' })
-
-        const forecastTitle = createElement({ tag: 'h3', className: 'forecast-title', text: 'Прогноз на 3 дня' })
-
+        const forecast = createElement({ tag: 'div', className: 'forecast' });
+        const forecastTitle = createElement({ tag: 'h3', className: 'forecast-title', text: 'Прогноз на 4 дня' });
         forecast.appendChild(forecastTitle);
 
-        const forecastDays = createElement({ tag: 'div', className: 'forecast-days' })
-
-        const threeDayForecast = this.weatherData.threeDayForecast;
-        const dayNames = ['Сегодня', 'Завтра', 'Послезавтра'];
+        const forecastDays = createElement({ tag: 'div', className: 'forecast-days' });
+        const threeDayForecast = this.weatherData.threeDayForecast || [];
 
         threeDayForecast.forEach((dayForecast, index) => {
-            const day = createElement({ tag: 'div', className: 'forecast-day' })
+            const day = createElement({ tag: 'div', className: 'forecast-day' });
 
-            const dayName = createElement({ tag: 'div', className: 'day-name', text: dayNames[index] })
+            const dayName = createElement({ tag: 'div', className: 'day-name', text: dayNames[index] });
 
-            const dayTemp = createElement({
+            const dayTemperatures = createElement({ tag: 'div', className: 'day-temperatures' });
+
+            const dayTempMax = createElement({
                 tag: 'div',
                 className: 'day-temp',
-                text: `${dayForecast.formattedMaxTemperature} / ${dayForecast.formattedMinTemperature}`
-            })
+                text: `Макс. темп: ${dayForecast.formattedMaxTemperature}`
+            });
 
+            const dayTempMin = createElement({
+                tag: 'div',
+                className: 'day-temp',
+                text: `Мин. темп: ${dayForecast.formattedMinTemperature}`
+            });
+
+            const dayInfo = createElement({ tag: 'div', className: 'day-info' });
+
+            const precip = createElement({
+                tag: 'span',
+                text: `Осадки: ${dayForecast.formattedPrecipProbability}`
+            });
+
+            const windSpeed = createElement({
+                tag: 'span',
+                text: `Ветер: ${dayForecast.formattedWindSpeed}`
+            });
+
+            const windDir = createElement({
+                tag: 'span',
+                text: `Направление: ${dayForecast.formattedWindDirection}`
+            });
+
+            const uvIndex = createElement({
+                tag: 'span',
+                text: `УФ: ${dayForecast.formattedUVIndex}`
+            });
+
+            dayTemperatures.appendChild(dayTempMax);
+            dayTemperatures.appendChild(dayTempMin);
+
+            dayInfo.appendChild(precip);
+            dayInfo.appendChild(windSpeed);
+            dayInfo.appendChild(windDir);
+            dayInfo.appendChild(uvIndex);
 
             day.appendChild(dayName);
-            day.appendChild(dayTemp);
+            day.appendChild(dayTemperatures);
+            day.appendChild(dayInfo);
 
             forecastDays.appendChild(day);
         });
 
         forecast.appendChild(forecastDays);
         return forecast;
+    }
+
+
+    createNoDataMessage() {
+        const noData = createElement({ tag: 'div', className: 'no-data', text: 'Неи данных о погоде' });
+        return noData;
     }
 
     getElement() {
