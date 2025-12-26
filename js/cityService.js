@@ -23,7 +23,7 @@ export class CityService {
     }
 
     static async getSuggestions(searchText) {
-        if (searchText.trim().length < 2) return [];
+        if (searchText.trim().length < 2) return [];   // пусть пользователь введет хотя бы две буквы, прежде чем ему будем подсказки выдавать
 
         const cities = await this.loadCities();
         return cities

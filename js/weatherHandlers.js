@@ -39,7 +39,7 @@ export class WeatherHandlers {
 
             await this.logic.cityWeather(name);
 
-            this.ui.showSuccess('Город успешно добавлен!');
+            this.ui.showSuccess('Город успешно добавлен');
 
             this.clearCityForm();
             this.ui.hideCity();
@@ -87,8 +87,8 @@ export class WeatherHandlers {
                     name: 'Текущее местоположение'
                 };
                 storage.set('currentLocation', this.logic.currentLocation);
-                successMessage = 'Местоположение обновлено!';
-                successDetails = `${name} установлен как текущее местоположение.`;
+                successMessage = 'Местоположение обновлено';
+                successDetails = `${name} установлен как текущее местоположение`;
             } else if (this.logic.isCityAlreadyAdded(res.coords)) {
                 this.ui.hideLoad();
                 this.ui.errorMsg('Этот город уже есть', 'loc');
@@ -100,7 +100,7 @@ export class WeatherHandlers {
                     name: 'Текущее местоположение'
                 };
                 storage.set('currentLocation', this.logic.currentLocation);
-                successMessage = 'Местоположение установлено!';
+                successMessage = 'Местоположение установлено';
                 successDetails = `Текущее местоположение установлено на ${name}.`;
             }
 
@@ -117,7 +117,7 @@ export class WeatherHandlers {
             this.ui.hideLoad();
         }
     }
-    
+
     async getCurrentLocation() {
         try {
             this.ui.showLoad();

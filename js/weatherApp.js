@@ -76,14 +76,11 @@ export class WeatherApp {
     }
 
     async showSuggestions(text, type) {
-        if (text.length < 2) {
-            this.ui.hideSuggestions();
-            return;
-        }
-
         try {
             const items = await CityService.getSuggestions(text);
+
             const container = type === 'city' ? this.ui.citySugg : this.ui.locSugg;
+            
             const input = type === 'city' ? this.ui.cityInp : this.ui.locInp;
 
             this.ui.showSuggestions(items, container, (city) => {

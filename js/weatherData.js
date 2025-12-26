@@ -5,7 +5,6 @@ export class WeatherData {
     constructor(apiResponse) {
         this.latitude = apiResponse.latitude;
         this.longitude = apiResponse.longitude;
-        this.timezone = apiResponse.timezone;
 
         if (apiResponse.current) {
             this.current = new CurrentWeather(apiResponse.current);
@@ -25,9 +24,5 @@ export class WeatherData {
 
     get threeDayForecast() {
         return this.dailyForecasts.slice(1, 5);
-    }
-
-    get isValid() {
-        return this.current && this.dailyForecasts.length > 0;
     }
 }
