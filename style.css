@@ -462,6 +462,67 @@ body {
     font-size: 16px;
 }
 
+.forecast-days {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    width: 100%;
+}
+
+.forecast-day {
+    background-color: var(--gray-10);
+    border-radius: 8px;
+    border: var(--border);
+    padding: 16px 12px; 
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between; 
+    min-height: 120px; 
+    box-sizing: border-box;
+}
+
+.day-temperatures {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    margin: 8px 0;
+}
+
+.day-temp-max {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--black);
+    line-height: 1.1;
+}
+
+.day-temp-min {
+    font-size: 13px;
+    color: var(--gray-80);
+    line-height: 1.1;
+}
+
+.day-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    width: 100%;
+    font-size: 11px;
+    color: var(--gray-50);
+}
+
+.day-info span {
+    width: 100%;
+    padding: 1px 0;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 @media (max-width: 768px) {
     .container {
         padding: 16px;
@@ -507,6 +568,16 @@ body {
     .form-card {
         padding: 24px;
     }
+
+    .forecast-days {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); 
+        gap: 10px;
+    }
+    
+    .forecast-day {
+        padding: 12px 8px;
+        min-height: 100px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -541,4 +612,61 @@ body {
         padding: 20px;
         margin: 16px;
     }
+    .forecast-days {
+        grid-template-columns: 1fr;
+        gap: 12px; 
+        max-width: 100%; 
+        margin: 0 auto;
+    }
+    
+    .forecast-day {
+        padding: 20px 16px;
+        min-height: auto; 
+        flex-direction: column; 
+        justify-content: flex-start; 
+        align-items: flex-start; 
+        text-align: left;
+        gap: 12px; 
+    }
+    
+    .day-name {
+        font-size: 14px;
+        font-weight: 600;
+        margin: 0;
+        order: 1;
+    }
+    
+    .day-temperatures {
+        align-items: flex-start; 
+        gap: 4px;
+        order: 2;
+        margin: 0;
+    }
+    
+    .day-temp-max {
+        font-size: 18px;
+        order: 1;
+    }
+    
+    .day-temp-min {
+        font-size: 14px;
+        order: 2;
+    }
+    
+    .day-info {
+        flex-direction: column; 
+        gap: 6px; 
+        width: 100%;
+        order: 3;
+        font-size: 13px; 
+        align-items: flex-start;
+    }
+    
+    .day-info span {
+        width: 100%; 
+        padding: 4px 0;
+        white-space: normal; 
+        overflow: visible;
+    }
+
 }
