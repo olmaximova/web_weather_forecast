@@ -19,20 +19,12 @@ export class WeatherData {
         }
     }
     
-    get today() {
+    get todayForecast() {
         return this.dailyForecasts[0] || null;
     }
     
-    get tomorrow() {
-        return this.dailyForecasts[1] || null;
-    }
-    
-    get dayAfterTomorrow() {
-        return this.dailyForecasts[2] || null;
-    }
-    
     get threeDayForecast() {
-        return this.dailyForecasts.slice(0, 3);
+        return this.dailyForecasts.slice(1, 4);
     }
     
     get isValid() {
