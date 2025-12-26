@@ -5,8 +5,6 @@ export class DailyForecast {
         this.date = data.time[index];
         this.maxTemperature = data.temperature_2m_max?.[index];
         this.minTemperature = data.temperature_2m_min?.[index];
-        this.sunrise = data.sunrise[index];
-        this.sunset = data.sunset[index];
         this.uvIndexMax = data.uv_index_max?.[index];
         this.precipProbabilityMax = data.precipitation_probability_max?.[index];
         this.windSpeedMax = data.wind_speed_10m_max[index];
@@ -42,14 +40,6 @@ export class DailyForecast {
         if (this.windDirection === undefined) return '—';
         const index = Math.round(this.windDirection / 45) % 8;
         return `${directions[index]}`;
-    }
-
-    get formattedSunrise() {
-        return this.sunrise || '—';
-    }
-
-    get formattedSunset() {
-        return this.sunset || '—';
     }
 }
 
