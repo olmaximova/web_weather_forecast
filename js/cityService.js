@@ -7,7 +7,7 @@ export class CityService {
         if (this.cities) return this.cities;
 
         const response = await fetch(CITIES_DATA_URL);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        if (!response.ok) throw new Error(`Не удалось загрузить города: ${response.status}`);
 
         const data = await response.json();
         this.cities = data.map(({ name, coords: { lat, lon } }) => ({ name, lat, lon }));
