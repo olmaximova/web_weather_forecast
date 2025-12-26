@@ -238,13 +238,15 @@ body {
 
 .day-name {
     font-size: 13px;
-    color: var(--gray-50);
+    color: var(--black);
+    font-weight: 600;
     margin-bottom: 8px;
     font-weight: 600;
+    text-transform: uppercase;
 }
 
 .day-temp {
-    color: var(--black);
+    color: var(--gray-50);
     font-weight: 600;
     margin: 8px 0;
     font-size: 14px;
