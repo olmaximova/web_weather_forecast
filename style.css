@@ -5,7 +5,7 @@
 }
 
 :root {
-    --black: #000000;
+    --black: #111111;
     --white: #ffffff;
     --gray-10: #f5f5f5;
     --gray-20: #e0e0e0;
@@ -27,7 +27,7 @@ body {
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 24px;
+    /* padding: 24px; */
 }
 
 .hidden {
@@ -41,17 +41,22 @@ body {
     align-items: center;
     margin-bottom: 32px;
     padding: 20px 24px;
-    background-color: var(--gray-20);
-    border-radius: var(--border-radius);
+    background-color: #818589;
+    border-bottom-right-radius: var(--border-radius);
+    border-bottom-left-radius: var(--border-radius);
     border: var(--border);
     flex-wrap: wrap;
     gap: 16px;
 }
 
 .title {
-    font-size: 24px;
     font-weight: 600;
-    color: var(--black);
+    gap: 12px;
+    color: #87CEEB;
+}
+
+.title svg {
+    flex-shrink: 0; 
 }
 
 .header-controls {
