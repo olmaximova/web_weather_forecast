@@ -27,7 +27,7 @@ export class WeatherApp {
 
             if (this.currentLocation) {
                 await this.logic.loadElements();
-            } else if (GeolocationService.isSupported()) {
+            } else if (GeolocationService.isSupported() && !storage.get('geolocationDenied')) {
                 await this.handlers.getCurrentLocation();
             } else {
                 this.ui.showLocationForm();

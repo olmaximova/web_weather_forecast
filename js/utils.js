@@ -7,9 +7,15 @@ export const checkCoords = (c1, c2, tolerance = 0.1) => {
 };
 
 export const storage = {
-    get(key, defaultValue = []) {
-        return JSON.parse(localStorage.getItem(key) || JSON.stringify(defaultValue))
+    get(key, defaultValue) {
+        try {
+            const item = localStorage.getItem(key);
+            return item ? JSON.parse(item) : defaultValue;
+        } catch {
+            return defaultValue;
+        }
     },
+
     set(key, value) {
         localStorage.setItem(key, JSON.stringify(value))
     },

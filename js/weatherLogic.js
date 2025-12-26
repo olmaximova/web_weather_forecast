@@ -87,7 +87,7 @@ export class WeatherLogic {
 
         if (this.currentLocation) {
             await this.showCurrentLocationWeather();
-            await waitGap(200); 
+            await waitGap(200);
         }
 
         for (const c of this.cities) {
@@ -96,12 +96,25 @@ export class WeatherLogic {
         }
     }
 
-    setCurrentLocation(lat, lon) {
-        this.currentLocation = {
+    async setCurrentLocation(lat, lon, cityName = null) {
+        const newLocation = {
             lat: lat,
             lon: lon,
-            name: 'Текущее местоположение'
+            name: cityName || 'Текущее местоположение'
         };
+
+        for (let i = this.cities.length - 1; i >= 0; i--) {
+            const city = this.cities[i];
+            if (city.lat && city.lon &&
+                Math.abs(city.lat - lat) < 0.1 &&
+                Math.abs(city.lon - lon) < 0.1) {
+                this.cities.splice(i, 1);
+                storage.set('cities', this.cities);
+                break;
+            }
+        }
+
+        this.currentLocation = newLocation;
         storage.set('currentLocation', this.currentLocation);
     }
 }

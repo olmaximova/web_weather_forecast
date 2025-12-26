@@ -75,38 +75,11 @@ export class WeatherHandlers {
             }
 
             const res = await WeatherService.getWeatherForCity(name, CityService);
-
-            let successMessage = '';
-            let successDetails = '';
-
-            const existingCity = this.logic.findExistingCity(res.coords, name);
-            if (existingCity) {
-                this.logic.currentLocation = {
-                    lat: existingCity.lat,
-                    lon: existingCity.lon,
-                    name: 'Текущее местоположение'
-                };
-                storage.set('currentLocation', this.logic.currentLocation);
-                successMessage = 'Местоположение обновлено';
-                successDetails = `${name} установлен как текущее местоположение`;
-            } else if (this.logic.isCityAlreadyAdded(res.coords)) {
-                this.ui.hideLoad();
-                this.ui.errorMsg('Этот город уже есть', 'loc');
-                return;
-            } else {
-                this.logic.currentLocation = {
-                    lat: res.coords.lat,
-                    lon: res.coords.lon,
-                    name: 'Текущее местоположение'
-                };
-                storage.set('currentLocation', this.logic.currentLocation);
-                successMessage = 'Местоположение установлено';
-                successDetails = `Текущее местоположение установлено на ${name}.`;
-            }
+            await this.logic.setCurrentLocation(res.coords.lat, res.coords.lon, name);
 
             await this.logic.loadElements();
 
-            this.ui.showSuccess(successMessage, successDetails);
+            this.ui.showSuccess('Местоположение установлено', `${name} установлен как текущее местоположение`);
 
             this.clearLocationForm();
             this.ui.hideLocationForm();
@@ -123,19 +96,13 @@ export class WeatherHandlers {
             this.ui.showLoad();
 
             const data = await WeatherService.getGeoWeather(GeolocationService);
-
-            this.logic.currentLocation = {
-                lat: data.coords.lat,
-                lon: data.coords.lon,
-                name: 'Текущее местоположение'
-            };
-            storage.set('currentLocation', this.logic.currentLocation);
+            await this.logic.setCurrentLocation(data.coords.lat, data.coords.lon);
 
             await this.logic.loadElements();
 
             this.ui.showSuccess(
                 'Местоположение определено!',
-                'Ваше текущее местоположение определено автоматически.'
+                'Текущее местоположение определено автоматически.'
             );
 
             this.clearLocationForm();
@@ -151,7 +118,7 @@ export class WeatherHandlers {
             } else {
                 this.ui.errorMsg('Произошла ошибка. Попробуйте ввести город вручную.', 'loc');
             }
-
+            storage.set('geolocationDenied', true);
             this.ui.showLocationForm();
         } finally {
             this.ui.hideLoad();
