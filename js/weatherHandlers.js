@@ -77,6 +77,12 @@ export class WeatherHandlers {
             const res = await WeatherService.getWeatherForCity(name, CityService);
             await this.logic.setCurrentLocation(res.coords.lat, res.coords.lon, name);
 
+            storage.set('currentLocation', {
+                lat: res.coords.lat,
+                lon: res.coords.lon,
+                name: name
+            });
+
             await this.logic.loadElements();
 
             this.ui.showSuccess('Местоположение установлено', `${name} установлен как текущее местоположение`);
@@ -97,6 +103,12 @@ export class WeatherHandlers {
 
             const data = await WeatherService.getGeoWeather(GeolocationService);
             await this.logic.setCurrentLocation(data.coords.lat, data.coords.lon);
+
+            storage.set('currentLocation', {
+                lat: data.coords.lat,
+                lon: data.coords.lon,
+                name: data.name || 'Текущее местоположение'
+            });
 
             await this.logic.loadElements();
 
@@ -125,11 +137,7 @@ export class WeatherHandlers {
         }
     }
 
-
     changeCurrentLocation() {
-        this.logic.currentLocation = null;
-        storage.remove('currentLocation');
-
         this.clearLocationForm();
         this.ui.showLocationForm();
     }
@@ -144,3 +152,4 @@ export class WeatherHandlers {
         this.ui.hideSuggestions();
     }
 }
+
